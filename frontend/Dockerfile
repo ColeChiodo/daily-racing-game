@@ -8,6 +8,7 @@ COPY tailwind.config.js ./
 COPY postcss.config.js ./
 COPY index.html ./
 COPY .env ./
+COPY public ./public
 COPY src ./src
 RUN npm run build
 

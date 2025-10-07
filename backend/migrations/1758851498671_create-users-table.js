@@ -19,6 +19,10 @@ exports.up = (pgm) => {
 			type: 'varchar(255)',
 			notNull: true,
 		},
+		profile_image: {
+			type: 'varchar(512)',
+			notNull: false,
+		},
 		created_at: {
 			type: 'timestamp',
 			notNull: true,

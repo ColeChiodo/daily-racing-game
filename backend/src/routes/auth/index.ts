@@ -16,7 +16,7 @@ router.get(
 	passport.authenticate('google', { failureRedirect: '/' }),
 	async (req, res) => {
 		try {
-			const profile = req.user as any; // Passport attaches Google profile
+			const profile = req.user as any;
 
 			if (
 				!profile ||
@@ -27,6 +27,10 @@ router.get(
 				throw new Error('Incomplete Google profile');
 			}
 
+			const email = profile.emails[0].value;
+			const name = profile.displayName;
+			const photo = profile.photos?.[0]?.value || null;
+
 			// Check if user exists
 			const { rows } = await pool.query(
 				'SELECT * FROM users WHERE google_id = $1',
@@ -34,10 +38,16 @@ router.get(
 			);
 
 			if (rows.length === 0) {
-				// Insert new user
+				// Insert new user with profile image
 				await pool.query(
-					'INSERT INTO users (google_id, email, name) VALUES ($1, $2, $3)',
-					[profile.id, profile.emails[0].value, profile.displayName]
+					'INSERT INTO users (google_id, email, name, profile_image) VALUES ($1, $2, $3, $4)',
+					[profile.id, email, name, photo]
+				);
+			} else {
+				// Optionally update profile image/name if changed
+				await pool.query(
+					'UPDATE users SET email = $1, name = $2, profile_image = $3 WHERE google_id = $4',
+					[email, name, photo, profile.id]
 				);
 			}
 
@@ -49,6 +59,7 @@ router.get(
 		}
 	}
 );
+
 
 // Logout route
 router.get('/logout', (req, res, next) => {

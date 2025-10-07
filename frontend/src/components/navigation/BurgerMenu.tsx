@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import GoogleOAuth from '../auth/GoogleOauth';
 import LogoutButton from '../auth/LogoutButton';
+import Footer from './Footer';
 
 interface User {
 	id: string;
@@ -9,13 +10,14 @@ interface User {
 		| { givenName: string; familyName: string }
 		| string;
 	email: string;
+	picture: string;
 }
 
 interface MenuProps {
 	user: User | null;
 }
 
-export default function Menu({ user }: MenuProps) {
+export default function BurgerMenu({ user }: MenuProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const location = useLocation();
 	const menuRef = useRef<HTMLDivElement>(null);
@@ -76,8 +78,8 @@ export default function Menu({ user }: MenuProps) {
 			{/* Slide-in Panel */}
 			<div
 				ref={menuRef}
-				className={`fixed top-16 right-4 w-72 bg-white shadow-lg rounded-lg p-6 transform transition-transform duration-300 ease-in-out ${
-					isOpen ? 'translate-x-0' : 'translate-x-full'
+				className={`fixed top-16 right-0 w-72 bg-white shadow-lg rounded-lg p-6 transform transition-transform duration-300 ease-in-out ${
+					isOpen ? 'translate-x-4' : 'translate-x-full'
 				}`}
 			>
 				{/* Navigation */}
@@ -111,10 +113,8 @@ export default function Menu({ user }: MenuProps) {
 						<LogoutButton />
 					</div>
 				)}
-				<footer className="mt-6 text-center text-sm text-gray-500 flex justify-center items-center">
-					<Link to="/about" className="hover:text-gray-900 transition">About</Link>
-					<div className="mx-2 text-gray-900">|</div>
-					<Link to="/tos" className="hover:text-gray-900 transition">TOS</Link>
+				<footer className="flex flex-col mt-6 text-center text-sm text-gray-500 flex justify-center items-center">
+					<Footer />
 				</footer>
 			</div>
 		</>

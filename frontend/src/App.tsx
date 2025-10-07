@@ -3,7 +3,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import GamePage from './pages/GamePage';
 import AboutPage from './pages/AboutPage';
-import Menu from './components/navigation/Menu';
+import BurgerMenu from './components/navigation/BurgerMenu';
 
 // Updated User interface to match backend structure
 interface User {
@@ -15,6 +15,7 @@ interface User {
 		  }
 		| string;
 	email: string;
+	picture: string;
 }
 
 function App() {
@@ -46,12 +47,10 @@ function App() {
 
 	return (
 		<div className="min-h-screen">
-			<Menu user={user} />
-
 			<main>
 				<Routes>
-					<Route path="/" element={<MainPage />} />
-					<Route path="/game" element={<GamePage />} />
+					<Route path="/" element={<MainPage user={user} />} />
+					<Route path="/game" element={<GamePage user={user} />} />
 					<Route path="/about" element={<AboutPage />} />
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>

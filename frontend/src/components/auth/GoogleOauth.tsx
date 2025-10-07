@@ -10,10 +10,10 @@ export default function GoogleOAuth() {
 	return (
 		<button
 			onClick={handleGoogleLogin}
-			className="flex items-center gap-3 px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow font-medium text-gray-700 w-full"
+			className="flex items-center gap-3 px-8 py-4 rounded-lg bg-white text-gray-900 font-bold border-b-4 border-r-4 border-gray-500 transition hover:bg-gray-200 w-full"
 		>
 			<img
-				src="https://developers.google.com/identity/images/g-logo.png"
+				src="https://www.svgrepo.com/show/475656/google-color.svg"
 				alt="Google Logo"
 				className="w-5 h-5"
 			/>
