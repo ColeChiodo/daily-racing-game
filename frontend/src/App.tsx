@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import GameCanvas from './components/GameCanvas';
-import GoogleOAuth from './components/GoogleOauth';
-import LogoutButton from './components/LogoutButton';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import MainPage from './pages/MainPage';
+import GamePage from './pages/GamePage';
+import AboutPage from './pages/AboutPage';
+import Menu from './components/navigation/Menu';
 
 // Updated User interface to match backend structure
 interface User {
@@ -41,20 +43,19 @@ function App() {
 		fetchProfile();
 	}, [backendUrl]);
 
-	// Helper to display name correctly whether it's a string or object
-	const renderUserName = () => {
-		if (!user || !user.name) return '';
-		if (typeof user.name === 'string') return user.name;
-		return `${user.name.givenName} ${user.name.familyName}`;
-	};
 
 	return (
-		<div>
-			<h1>Daily Racing Game</h1>
-			<GameCanvas />
-			{!user && <GoogleOAuth />}
-			{user && <p>Welcome, {renderUserName()}!</p>}
-			{user && <LogoutButton />}
+		<div className="min-h-screen">
+			<Menu user={user} />
+
+			<main>
+				<Routes>
+					<Route path="/" element={<MainPage />} />
+					<Route path="/game" element={<GamePage />} />
+					<Route path="/about" element={<AboutPage />} />
+					<Route path="*" element={<Navigate to="/" replace />} />
+				</Routes>
+			</main>
 		</div>
 	);
 }

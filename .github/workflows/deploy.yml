@@ -26,8 +26,6 @@
 #           username: ${{ secrets.DO_USER }}
 #           key: ${{ secrets.DO_SSH_KEY }}
 #           script: |
-#             cd /var/www/dailyracer
+#             cd /var/www/daily-racing-game
 #             git pull origin main
-#             docker compose down
-#             docker compose build
-#             docker compose up -d
+#             ./start.sh --prod

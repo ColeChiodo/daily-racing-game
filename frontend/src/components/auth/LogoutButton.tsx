@@ -11,7 +11,14 @@ const LogoutButton: React.FC = () => {
 		});
 	}, []);
 
-	return <button ref={logoutButtonRef}>Logout</button>;
+	return (
+		<button 
+			ref={logoutButtonRef}
+			className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+		>
+			Logout
+		</button>
+	);
 };
 
 export default LogoutButton;

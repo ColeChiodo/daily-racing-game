@@ -31,12 +31,11 @@ backend/.env
 # ------------------------
 # Docker
 # ------------------------
-# Docker build artifacts
-**/docker-compose.override.yml
-**/Dockerfile.*
-
-# Optional: Docker container logs
+# Docker Compose override files (local dev settings)
 docker-compose.override.yml
+
+# Docker build artifacts
+**/Dockerfile.*
 *.dockerfile
 
 # ------------------------

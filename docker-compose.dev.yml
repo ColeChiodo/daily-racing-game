@@ -21,6 +21,8 @@ services:
       - ./backend/.env
     depends_on:
       - db
+    environment:
+      - NODE_ENV=development
 
   frontend:
     build: ./frontend

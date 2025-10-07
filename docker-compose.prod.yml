@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env.prod
+    environment:
+      - NODE_ENV=production
+      # Database connection will be via Supabase URL in .env.prod
+      # No local database service needed
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./frontend/.env.prod
+    depends_on:
+      - backend
+    command: npm run build && npm run preview
