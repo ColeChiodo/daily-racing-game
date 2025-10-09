@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import GoogleOAuth from '../auth/GoogleOauth';
-import LogoutButton from '../auth/LogoutButton';
+import UserInfo from '../auth/UserInfo';
 import Footer from './Footer';
 
 interface User {
@@ -30,8 +30,8 @@ export default function BurgerMenu({ user }: MenuProps) {
 	};
 
 	const routes = [
-		{ path: '/', label: 'Return to Homepage 🏠' },
-		{ path: '/game', label: 'Play Daily Race 🏎️' },
+		{ path: '/', label: 'Return Home 🏠' },
+		{ path: '/play', label: 'Play Daily Race 🏎️' },
 	];
 
 	let availableRoutes;
@@ -66,54 +66,64 @@ export default function BurgerMenu({ user }: MenuProps) {
 			<button
 				ref={burgerRef}
 				onClick={() => setIsOpen(prev => !prev)}
-				className="fixed top-4 right-4 z-50 p-3 rounded-md bg-white shadow-md hover:bg-gray-100 transition"
-			>
-				<div className="space-y-1">
-					<div className="w-6 h-0.5 bg-gray-700"></div>
-					<div className="w-6 h-0.5 bg-gray-700"></div>
-					<div className="w-6 h-0.5 bg-gray-700"></div>
-				</div>
+				className="fixed top-4 right-4 z-50 p-3 rounded bg-slate-100 hover:bg-slate-200 transition border border-slate-700"
+				>
+				
+					<div className="flex flex-col justify-center items-center w-6 h-6 relative space-y-1">
+						{/* Top line */}
+						<span
+						className={`block h-0.5 w-6 bg-slate-700 transform transition duration-300 ease-in-out origin-center ${
+							isOpen ? "rotate-45 translate-y-1.5" : ""
+						}`}
+						></span>
+						{/* Middle line */}
+						<span
+						className={`block h-0.5 w-6 bg-slate-700 transition duration-300 ease-in-out ${
+							isOpen ? "opacity-0" : ""
+						}`}
+						></span>
+						{/* Bottom line */}
+						<span
+						className={`block h-0.5 w-6 bg-slate-700 transform transition duration-300 ease-in-out origin-center ${
+							isOpen ? "-rotate-45 -translate-y-1.5" : ""
+						}`}
+						></span>
+					</div>
 			</button>
 
 			{/* Slide-in Panel */}
 			<div
 				ref={menuRef}
-				className={`fixed top-16 right-0 w-72 bg-white shadow-lg rounded-lg p-6 transform transition-transform duration-300 ease-in-out ${
+				className={`fixed top-20 right-0 w-auto bg-slate-100 rounded-lg border border-slate-700 p-6 transform transition-transform duration-300 ease-in-out ${
 					isOpen ? 'translate-x-4' : 'translate-x-full'
-				}`}
-			>
+			}`}>
+				{/* Auth */}
+				{!user && (
+					<div className="text-center">
+						<GoogleOAuth className="flex-col" />
+					</div>
+				)}
+	
+				{user && (
+					<div className="text-center w-full">
+						<UserInfo user={user} />
+					</div>
+				)}
+
 				{/* Navigation */}
-				<nav className="flex flex-col gap-3 mb-6">
+				<nav className="flex flex-col gap-3">
 					{availableRoutes.map(route => (
 						<Link
 							key={route.path}
 							to={route.path}
 							onClick={() => setIsOpen(false)}
-							className="block text-center px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
+							className="block button text-center bg-violet-500 hover:bg-violet-600 border-violet-700"
 						>
 							{route.label}
 						</Link>
 					))}
 				</nav>
-
-				{/* Auth */}
-				{!user && (
-					<div className="text-center">
-						<GoogleOAuth />
-					</div>
-				)}
-
-				{user && (
-					<div className="bg-gray-50 p-4 rounded-lg shadow-inner text-center">
-						<p className="text-lg mb-3">
-							Welcome,{' '}
-							<span className="font-semibold text-blue-600">{renderUserName()}</span>
-							!
-						</p>
-						<LogoutButton />
-					</div>
-				)}
-				<footer className="flex flex-col mt-6 text-center text-sm text-gray-500 flex justify-center items-center">
+				<footer className="flex flex-col mt-2 text-center text-xs text-gray-500 flex justify-center items-center">
 					<Footer />
 				</footer>
 			</div>

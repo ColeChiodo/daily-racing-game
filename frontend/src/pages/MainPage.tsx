@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import GoogleOAuth from '../components/auth/GoogleOauth';
 import LogoutButton from '../components/auth/LogoutButton';
+import UserInfo from '../components/auth/UserInfo';
 import Footer from '../components/navigation/Footer';
 
 interface User {
@@ -19,12 +20,6 @@ interface MenuProps {
 
 export default function MainPage({ user }: MenuProps) {
     const [countdown, setCountdown] = useState<string>('');
-
-	const renderUserName = () => {
-		if (!user || !user.name) return '';
-		if (typeof user.name === 'string') return user.name;
-		return `${user.name.givenName} ${user.name.familyName}`;
-	};
 
     // Calculate countdown to next 5:00 AM UTC +0
     useEffect(() => {
@@ -79,24 +74,13 @@ export default function MainPage({ user }: MenuProps) {
 			)}
 
 			{user && (
-				<div className="bg-gray-50 p-4 rounded-lg shadow-inner text-center absolute right-0 m-4">
-					<div className="flex items-center justify-center space-x-3 mb-3">
-					{user.picture && (
-						<img
-							src={user.picture}
-							className="w-10 h-10 rounded-full border"
-						/>
-					)}
-					<span className="font-semibold text-blue-600 text-lg">
-						{renderUserName()}
-					</span>
-					</div>
-					<LogoutButton />
+				<div className="absolute right-0 m-4">
+					<UserInfo user={user} />
 				</div>
 			)}
 
 
-			<div className="flex flex-col items-center justify-center min-h-screen max-h-screen text-center p-4 bg-primary">
+			<div className="flex flex-col items-center justify-center min-h-screen max-h-screen text-center p-4 bg-slate-500">
 				{/* Logo */}
 				<h1 className="text-3xl font-bold text-white">Daily Racing Game</h1>
 
@@ -113,15 +97,15 @@ export default function MainPage({ user }: MenuProps) {
 
 				{/* Play Button */}
 				<div className="mt-2">
-					<Link to="/game"
-						className="px-8 py-4 rounded-lg bg-cyan-500 text-white font-bold border-b-4 border-r-4 border-cyan-700 transition hover:bg-cyan-600">
+					<Link to="/play"
+						className="button bg-emerald-500 border-emerald-700 hover:bg-emerald-600">
 						Play Daily Race <b className="text-3xl">🏎️</b>
 					</Link>
 				</div>
 
-				<div className="mt-8">
+				<div className="mt-10">
 					<Link to="/leaderboard"
-						className="px-8 py-4 rounded-lg bg-emerald-500 text-white font-bold border-b-4 border-r-4 border-emerald-700 transition hover:bg-emerald-600">
+						className="button">
 						<b className="text-3xl align-middle">🏆</b> View Today's Leaders
 					</Link>
 				</div>

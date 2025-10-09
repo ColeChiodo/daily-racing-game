@@ -50,7 +50,7 @@ function App() {
 			<main>
 				<Routes>
 					<Route path="/" element={<MainPage user={user} />} />
-					<Route path="/game" element={<GamePage user={user} />} />
+					<Route path="/play" element={<GamePage user={user} />} />
 					<Route path="/about" element={<AboutPage />} />
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
