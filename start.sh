@@ -30,7 +30,7 @@ done
 
 if [ "$PROD_MODE" = true ]; then
     echo "🚀 Starting PRODUCTION environment..."
-    echo "⚠️  Make sure you have .env.prod files configured for Supabase!"
+    echo "⚠️  Make sure you have .env files configured for Supabase!"
 else
     echo "🛠️  Starting DEVELOPMENT environment..."
 fi
