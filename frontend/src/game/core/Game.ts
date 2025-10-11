@@ -83,7 +83,7 @@ export class Game {
         this.camera.apply(ctx);
 
         // Draw world relative to camera
-        this.renderer.drawGrass(w*10, h*10);
+        this.renderer.drawIsland(w*10, h*10);
         this.renderer.drawGrid(w*10, h*10);
 
         // Draw Entities

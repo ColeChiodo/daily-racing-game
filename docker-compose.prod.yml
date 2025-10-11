@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - ./backend/.env.prod
+      - ./backend/.env
     environment:
       - NODE_ENV=production
       # Database connection will be via Supabase URL in .env.prod
@@ -17,7 +17,7 @@ services:
     ports:
       - "5173:5173"
     env_file:
-      - ./frontend/.env.prod
+      - ./frontend/.env
     depends_on:
       - backend
     command: npm run build && npm run preview

@@ -13,6 +13,9 @@ export class Renderer {
         ctx.save();
         ctx.globalAlpha = 0.12;
 
+        // Move origin to center of canvas
+        ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+
         // Fill background centered
         ctx.fillStyle = "#2b2b2b";
         ctx.fillRect(-w / 2, -h / 2, w, h);
@@ -37,14 +40,16 @@ export class Renderer {
         ctx.restore();
     }
 
-
-    drawGrass(w: number, h: number) {
+    drawIsland(w: number, h: number) {
         const ctx = this.ctx;
         ctx.save();
 
-        // Base green color
+        // Move origin to center of canvas
+        ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+
+        // Base green color, centered
         ctx.fillStyle = "#3c9e3c"; // nice mid-green
-        ctx.fillRect(-w/2, -h/2, w, h);
+        ctx.fillRect(-w / 2, -h / 2, w, h);
 
         ctx.restore();
     }
@@ -61,18 +66,32 @@ export class Renderer {
         track.draw(this.ctx, offsetX, offsetY);
     }
 
+    private lastFrameTime = performance.now();
+    private fps = 0;
+
     drawDebug(car: Car, canvas: HTMLCanvasElement) {
+        const now = performance.now();
+        const delta = (now - this.lastFrameTime) / 1000; // seconds since last frame
+        this.lastFrameTime = now;
+
+        // Exponential moving average to smooth FPS
+        const currentFps = 1 / delta;
+        this.fps = this.fps * 0.9 + currentFps * 0.1;
+
         const ctx = this.ctx;
         ctx.save();
         ctx.fillStyle = "black";
         ctx.font = "12px monospace";
+
         ctx.fillText(
             `pos: ${car.x.toFixed(1)}, ${car.y.toFixed(1)}`,
             10,
-            canvas.height - 46
+            canvas.height - 62
         );
-        ctx.fillText(`speed: ${car.speed.toFixed(2)}`, 10, canvas.height - 30);
-        ctx.fillText(`angle: ${car.angle.toFixed(2)}°`, 10, canvas.height - 14);
+        ctx.fillText(`speed: ${car.speed.toFixed(2)}`, 10, canvas.height - 46);
+        ctx.fillText(`angle: ${car.angle.toFixed(2)}°`, 10, canvas.height - 30);
+        ctx.fillText(`fps: ${this.fps.toFixed(1)}`, 10, canvas.height - 14);
+
         ctx.restore();
     }
 }

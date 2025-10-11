@@ -28,6 +28,8 @@ export class Car {
     private readonly boostForce = 700;
     private readonly boostDuration = 0.6;
 
+    private onTrack = true;
+
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
@@ -48,7 +50,7 @@ export class Car {
         this.handleDrift(dt, input);
 
         // check if on track
-        const onTrack = track.isOnTrack(this.x, this.y);
+        this.onTrack = track.isOnTrack(this.x, this.y);
 
         // forward/back
         if (input.up) this.speed += this.accel * dt;
@@ -89,7 +91,7 @@ export class Car {
         // max speed and friction based on onTrack
         let currentMax = this.maxSpeed;
         this.friction = 400;
-        if (!onTrack) { currentMax *= 0.5; this.friction = 600; }
+        if (!this.onTrack) { currentMax *= 0.5; this.friction = 600; }
         if (this.drifting && this.boostTimer <= 0) currentMax *= 0.7;
         if (this.boostTimer > 0) currentMax = this.boostedMaxSpeed;
         this.speed = clamp(this.speed, this.reverseMax, currentMax);
@@ -101,6 +103,12 @@ export class Car {
     }
 
     private handleDrift(dt: number, input: InputState) {
+        if (this.speed < 210) {
+            this.drifting = false;
+            this.driftTimer = 0;
+            this.driftCharge = 0;
+            return;
+        }
         if (input.drift && !this.drifting && (input.left || input.right)) {
             this.drifting = true;
             this.driftDirection = input.left ? -1 : 1;
@@ -110,9 +118,9 @@ export class Car {
 
         if (this.drifting) {
             this.driftTimer += dt;
-            if (this.driftTimer > 0.3 && this.driftCharge < 1) this.driftCharge = 1;
-            if (this.driftTimer > 0.5 && this.driftCharge < 2) this.driftCharge = 2;
-            if (this.driftTimer > 0.9 && this.driftCharge < 3) this.driftCharge = 3;
+            if (this.driftTimer > 0.2 && this.driftCharge < 1) this.driftCharge = 1;
+            if (this.driftTimer > 0.4 && this.driftCharge < 2) this.driftCharge = 2;
+            if (this.driftTimer > 0.7 && this.driftCharge < 3) this.driftCharge = 3;
             if (!input.drift) this.endDrift();
         }
     }

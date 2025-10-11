@@ -3,7 +3,7 @@ import { createSeededRandom } from '../Utils';
 export interface TrackSegment {
     x: number;
     y: number;
-    radius: number; // half-width of track
+    radius: number;
 }
 
 export class Track {
@@ -15,7 +15,7 @@ export class Track {
 
     constructor(width: number, height: number, seed: number) {
         console.log('Track constructor called with seed:', seed);
-        this.canvasWidth = width; // Kept for potential future use
+        this.canvasWidth = width;
         this.canvasHeight = height;
         this.random = createSeededRandom(seed);
         this.generateRandomLoop();
@@ -23,12 +23,12 @@ export class Track {
     }
 
     private generateRandomLoop() {
-        const numPoints = Math.floor(this.random() * 12) + 10; // 10 to 21 points for more complex shapes
+        const numPoints = Math.floor(this.random() * 12) + 9; // 10 to 21 points for more complex shapes
         const centerX = this.canvasWidth / 2; // Fixed center for larger track
         const centerY = this.canvasHeight / 2;
         const baseRadius = 600; // Larger base radius for bigger track
-        const variation = baseRadius * 1.2; // Increased variation for more dynamic shapes
-        const angleJitter = (2 * Math.PI / numPoints) * 0.5; // Increased jitter for twisty shapes
+        const variation = baseRadius * 1.6; // Increased variation for more dynamic shapes
+        const angleJitter = (2 * Math.PI / numPoints) * 0.2; // Increased jitter for twisty shapes
         const baseTrackRadius = 50; // Slightly wider base half-width
 
         for (let i = 0; i < numPoints; i++) {
