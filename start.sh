@@ -79,7 +79,7 @@ if [ "$PROD_MODE" = false ]; then
 else
     echo "📱 Frontend: http://localhost:5173"
     echo "🔧 Backend API: http://localhost:3000"
-    echo "🗄️  Database: Supabase (cloud)"
+    echo "🗄️  Database: Supabase"
 fi
 echo ""
 echo "📋 View logs: docker compose -f $COMPOSE_FILE logs -f"
