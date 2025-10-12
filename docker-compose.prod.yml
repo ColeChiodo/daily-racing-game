@@ -18,4 +18,4 @@ services:
       - ./frontend/.env
     depends_on:
       - backend
-    command: npm run build && npm run preview
+    command: npm run dev

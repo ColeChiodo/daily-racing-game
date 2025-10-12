@@ -28,7 +28,14 @@ jobs:
           script: |
             cd /var/www/daily-racing-game
             git pull origin main
-            ./start.sh --prod --init-db
+            cd backend
+            npm install
+            npm run build
+            pm2 restart dailyracer_backend
+            cd ../frontend
+            npm install
+            npm run build
+            pm2 restart dailyracer_frontend
 
           # --no-cache: Build all images without using Docker cache
           # --init-db: Run database initialization (migrations)
