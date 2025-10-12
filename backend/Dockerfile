@@ -20,8 +20,5 @@ COPY migrations ./migrations
 # Build TypeScript (if you have a build script)
 RUN npm run build
 
-# Expose port (optional)
-EXPOSE 3000
-
 # Start the app
 CMD ["npm", "start"]
