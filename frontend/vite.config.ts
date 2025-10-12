@@ -9,5 +9,6 @@ export default defineConfig({
   },
   preview: {
     port: 5173,
+    allowedHosts: ['dailyracer.colechiodo.cc'],
   },
 });

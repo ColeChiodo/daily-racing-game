@@ -1,42 +1,42 @@
-name: Deploy to DigitalOcean Droplet
+# name: Deploy to DigitalOcean Droplet
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v3
 
-      # - name: Run Tests
-      #   run: |
-      #     npm install
-      #     npm test  # or your actual test command
+#       # - name: Run Tests
+#       #   run: |
+#       #     npm install
+#       #     npm test  # or your actual test command
 
-      - name: Deploy via SSH
-        if: success()
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USER }}
-          key: ${{ secrets.DO_SSH_KEY }}
-          script: |
-            cd /var/www/daily-racing-game
-            git pull origin main
-            cd backend
-            npm install
-            npm run build
-            pm2 restart dailyracer_backend
-            cd ../frontend
-            npm install
-            npm run build
-            pm2 restart dailyracer_frontend
+#       - name: Deploy via SSH
+#         if: success()
+#         uses: appleboy/ssh-action@v0.1.10
+#         with:
+#           host: ${{ secrets.DO_HOST }}
+#           username: ${{ secrets.DO_USER }}
+#           key: ${{ secrets.DO_SSH_KEY }}
+#           script: |
+#             cd /var/www/daily-racing-game
+#             git pull origin main
+#             cd backend
+#             npm install
+#             npm run build
+#             pm2 restart dailyracer_backend
+#             cd ../frontend
+#             npm install
+#             npm run build
+#             pm2 restart dailyracer_frontend
 
-          # --no-cache: Build all images without using Docker cache
-          # --init-db: Run database initialization (migrations)
-          # --prod: Start production environment (uses Supabase)
+#           # --no-cache: Build all images without using Docker cache
+#           # --init-db: Run database initialization (migrations)
+#           # --prod: Start production environment (uses Supabase)
