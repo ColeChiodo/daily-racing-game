@@ -5,13 +5,9 @@ services:
     build: ./backend
     restart: always
     ports:
-      - "5150:5150"
+      - "5051:5051"
     env_file:
       - ./backend/.env
-    environment:
-      - NODE_ENV=production
-      # Database connection will be via Supabase URL in .env.prod
-      # No local database service needed
 
   frontend:
     build: ./frontend
