@@ -28,4 +28,8 @@ jobs:
           script: |
             cd /var/www/daily-racing-game
             git pull origin main
-            ./start.sh --prod
+            ./start.sh --prod --init-db --no-cache
+
+          # --no-cache: Build all images without using Docker cache
+          # --init-db: Run database initialization (migrations)
+          # --prod: Start production environment (uses Supabase)

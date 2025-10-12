@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# Usage: ./start.sh [--reset-db] [--prod]
+# Usage: ./start.sh [--reset-db] [--no-cache] [--init-db] [--prod]
 # --reset-db: Reset database and remove all volumes
+# --no-cache: Build all images without using Docker cache
+# --init-db: Run database initialization (migrations)
 # --prod: Start production environment (uses Supabase)
 
 RESET_DB=false
+NO_CACHE=false
+INIT_DB=false
 PROD_MODE=false
 COMPOSE_FILE="docker-compose.dev.yml"
 
@@ -15,6 +19,14 @@ while [[ $# -gt 0 ]]; do
             RESET_DB=true
             shift
             ;;
+        --no-cache)
+            NO_CACHE=true
+            shift
+            ;;
+        --init-db)
+            INIT_DB=true
+            shift
+            ;;
         --prod)
             PROD_MODE=true
             COMPOSE_FILE="docker-compose.prod.yml"
@@ -22,12 +34,13 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown option $1"
-            echo "Usage: ./start.sh [--reset-db] [--prod]"
+            echo "Usage: ./start.sh [--reset-db] [--no-cache] [--init-db] [--prod]"
             exit 1
             ;;
     esac
 done
 
+# Mode indicator
 if [ "$PROD_MODE" = true ]; then
     echo "🚀 Starting PRODUCTION environment..."
     echo "⚠️  Make sure you have .env files configured for Supabase!"
@@ -35,7 +48,7 @@ else
     echo "🛠️  Starting DEVELOPMENT environment..."
 fi
 
-# Step 1: Stop and remove existing containers
+# Step 1: Stop and remove containers
 if [ "$RESET_DB" = true ]; then
     echo "Resetting database and removing all containers..."
     docker compose -f "$COMPOSE_FILE" down -v --remove-orphans
@@ -44,16 +57,21 @@ else
     docker compose -f "$COMPOSE_FILE" down --remove-orphans
 fi
 
-# Step 2: Build all services
+# Step 2: Build services
 echo "Building all services..."
-docker compose -f "$COMPOSE_FILE" build --no-cache
+if [ "$NO_CACHE" = true ]; then
+    echo "🧱 Building with --no-cache..."
+    docker compose -f "$COMPOSE_FILE" build --no-cache
+else
+    docker compose -f "$COMPOSE_FILE" build
+fi
 
+# Step 3: Database handling
 if [ "$PROD_MODE" = false ]; then
-    # Development mode: Start with local PostgreSQL
+    # Development mode: local PostgreSQL
     echo "Starting local PostgreSQL database..."
     docker compose -f "$COMPOSE_FILE" up -d db
 
-    # Wait for DB to be ready
     echo "Waiting for database to be ready..."
     DB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" ps -q db)
     until docker exec "$DB_CONTAINER" pg_isready -U admin >/dev/null 2>&1; do
@@ -61,12 +79,20 @@ if [ "$PROD_MODE" = false ]; then
     done
     echo "Database is ready ✅"
 
-    # Run migrations
-    echo "Running backend migrations..."
-    docker compose -f "$COMPOSE_FILE" run --rm backend npm run migrate
+    # Only run migrations if requested or reset
+    if [ "$INIT_DB" = true ] || [ "$RESET_DB" = true ]; then
+        echo "Running backend migrations..."
+        docker compose -f "$COMPOSE_FILE" run --rm backend npm run migrate
+    fi
+else
+    # Production mode
+    if [ "$INIT_DB" = true ]; then
+        echo "Running production migrations..."
+        docker compose -f "$COMPOSE_FILE" run --rm backend npm run migrate
+    fi
 fi
 
-# Step 3: Start all services
+# Step 4: Start all services
 echo "Starting all services..."
 docker compose -f "$COMPOSE_FILE" up -d
 
