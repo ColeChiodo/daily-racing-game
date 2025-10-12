@@ -5,7 +5,7 @@ services:
     build: ./backend
     restart: always
     ports:
-      - "5051:5051"
+      - "9150:9150"
     env_file:
       - ./backend/.env
 
