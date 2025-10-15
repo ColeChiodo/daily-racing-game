@@ -41,8 +41,8 @@ jobs:
             cd /var/www/daily-racing-game/backend
             pm2 restart dailyracer_backend || pm2 start npm --name dailyracer_backend -- start
 
-            rm -rf /var/www/daily-racing-game/frontend/*
+            cd /var/www/daily-racing-game/frontend
             scp -r $GITHUB_WORKSPACE/frontend/dist/* ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:/var/www/daily-racing-game/frontend/
-            pm2 restart dailyracer_frontend || pm2 start /var/www/daily-racing-game/frontend --name dailyracer_frontend
-
+            pm2 restart dailyracer_frontend || pm2 start serve --name dailyracer_frontend -- dist -l 4173
+            
             pm2 save
