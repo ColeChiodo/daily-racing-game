@@ -98,8 +98,17 @@ export class Car {
 
         // update position
         const rad = degToRad(this.angle);
-        this.x += Math.cos(rad) * this.speed * dt;
-        this.y += Math.sin(rad) * this.speed * dt;
+        const newX = this.x + Math.cos(rad) * this.speed * dt;
+        const newY = this.y + Math.sin(rad) * this.speed * dt;
+        
+        // Check for wall collision before updating position
+        if (!track.checkWallCollision(newX, newY, this.width, this.height)) {
+            this.x = newX;
+            this.y = newY;
+        } else {
+            // If collision detected, stop the car
+            this.speed *= 0.1;
+        }
     }
 
     private handleDrift(dt: number, input: InputState) {

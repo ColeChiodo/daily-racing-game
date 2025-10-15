@@ -40,20 +40,6 @@ export class Renderer {
         ctx.restore();
     }
 
-    drawIsland(w: number, h: number) {
-        const ctx = this.ctx;
-        ctx.save();
-
-        // Move origin to center of canvas
-        ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
-
-        // Base green color, centered
-        ctx.fillStyle = "#3c9e3c"; // nice mid-green
-        ctx.fillRect(-w / 2, -h / 2, w, h);
-
-        ctx.restore();
-    }
-
     drawCar(car: Car, offsetX: number = 0, offsetY: number = 0) {
         const ctx = this.ctx;
         ctx.save();
@@ -62,8 +48,8 @@ export class Renderer {
         ctx.restore();
     }
 
-    drawTrack(track: Track, offsetX: number = 0, offsetY: number = 0) {
-        track.draw(this.ctx, offsetX, offsetY);
+    drawTrack(track: Track, carX?: number, carY?: number, offsetX: number = 0, offsetY: number = 0) {
+        track.draw(this.ctx, offsetX, offsetY, carX, carY);
     }
 
     private lastFrameTime = performance.now();
