@@ -1,41 +1,48 @@
-# name: Deploy to DigitalOcean Droplet
+name: Deploy Frontend to DigitalOcean Droplet
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout repo
-#         uses: actions/checkout@v3
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-#       # - name: Run Tests
-#       #   run: |
-#       #     npm install
-#       #     npm test  # or your actual test command
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-#       - name: Deploy via SSH
-#         if: success()
-#         uses: appleboy/ssh-action@v0.1.10
-#         with:
-#           host: ${{ secrets.DO_HOST }}
-#           username: ${{ secrets.DO_USER }}
-#           key: ${{ secrets.DO_SSH_KEY }}
-#           script: |
-#             cd /var/www/daily-racing-game
-#             git pull origin main
-#             cd backend
-#             npm install
-#             pm2 restart dailyracer_backend
-#             cd ../frontend
-#             npm install
-#             npm run build
-#             pm2 restart dailyracer_frontend
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
 
-#           # --no-cache: Build all images without using Docker cache
-#           # --init-db: Run database initialization (migrations)
-#           # --prod: Start production environment (uses Supabase)
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Deploy dist folder via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            cd /var/www/daily-racing-game
+            git pull origin main
+            npm install
+            cd /var/www/daily-racing-game/backend
+            pm2 restart dailyracer_backend || pm2 start npm --name dailyracer_backend -- start
+
+            rm -rf /var/www/daily-racing-game/frontend/*
+            scp -r $GITHUB_WORKSPACE/frontend/dist/* ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:/var/www/daily-racing-game/frontend/
+            pm2 restart dailyracer_frontend || pm2 start /var/www/daily-racing-game/frontend --name dailyracer_frontend
+
+            pm2 save
