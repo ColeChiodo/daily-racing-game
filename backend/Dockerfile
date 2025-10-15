@@ -17,8 +17,5 @@ COPY tsconfig.json ./
 COPY src ./src
 COPY migrations ./migrations
 
-# Build TypeScript (if you have a build script)
-RUN npm run build
-
 # Start the app
 CMD ["npm", "start"]
