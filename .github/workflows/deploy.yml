@@ -40,7 +40,6 @@ jobs:
           key: ${{ secrets.DO_SSH_KEY }}
           source: "frontend/dist/*"
           target: "/var/www/daily-racing-game/frontend/"
-          strip_components: 2
 
       - name: Restart processes on VPS
         uses: appleboy/ssh-action@v1.0.3
