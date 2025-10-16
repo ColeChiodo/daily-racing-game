@@ -7,7 +7,8 @@ on:
 
 jobs:
   deploy-frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
 
     steps:
       - name: Checkout repo
@@ -40,6 +41,8 @@ jobs:
           key: ${{ secrets.DO_SSH_KEY }}
           source: "frontend/dist/*"
           target: "/var/www/daily-racing-game/"
+          debug: true
+          timeout: 120s
 
       - name: Deploy backend via SSH
         uses: appleboy/ssh-action@v0.1.10
