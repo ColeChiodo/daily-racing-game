@@ -46,6 +46,7 @@ jobs:
             pm2 restart dailyracer_backend || pm2 start npm --name dailyracer_backend -- start
 
             cd /var/www/daily-racing-game/frontend
+            npm install
             scp -r $GITHUB_WORKSPACE/frontend/dist/* ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:/var/www/daily-racing-game/frontend/
             pm2 restart dailyracer_frontend || pm2 start serve --name dailyracer_frontend -- dist -l 5173
             
