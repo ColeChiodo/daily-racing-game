@@ -22,10 +22,11 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            maxAge: 1000 * 60 * 60 * 24 * 7,
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
             secure: process.env.NODE_ENV === 'production',
             httpOnly: true,
-            sameSite: 'lax',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            domain: process.env.NODE_ENV === 'production' ? '.colechiodo.cc' : undefined,
         },
     })
 );

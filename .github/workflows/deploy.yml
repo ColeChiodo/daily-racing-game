@@ -53,8 +53,8 @@ jobs:
           script: |
             cd /var/www/daily-racing-game
             git pull origin main
-            npm install
             cd /var/www/daily-racing-game/backend
+            npm install
             pm2 restart dailyracer_backend || pm2 start npm --name dailyracer_backend -- start
 
             cd /var/www/daily-racing-game/frontend
