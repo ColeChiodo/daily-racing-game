@@ -32,7 +32,18 @@ jobs:
           cd frontend
           npm run build
 
-      - name: Deploy dist folder via SSH
+      - name: Deploy frontend by copying dist folder
+        run: |
+          tar -czf dist.tar.gz -C frontend dist
+          scp -i ~/.ssh/id_rsa dist.tar.gz ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:/tmp/
+          ssh -i ~/.ssh/id_rsa ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} << 'EOF'
+            cd /var/www/daily-racing-game/frontend
+            tar -xzf /tmp/dist.tar.gz -C /var/www/daily-racing-game/frontend --strip-components=1
+            pm2 restart dailyracer_frontend || pm2 start serve --name dailyracer_frontend -- dist -l 5173
+            pm2 save
+          EOF
+
+      - name: Deploy backend via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.DO_HOST }}
@@ -44,9 +55,4 @@ jobs:
             npm install
             cd /var/www/daily-racing-game/backend
             pm2 restart dailyracer_backend || pm2 start npm --name dailyracer_backend -- start
-
-            cd /var/www/daily-racing-game/frontend
-            scp -r $GITHUB_WORKSPACE/frontend/dist/* ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:/var/www/daily-racing-game/frontend/
-            pm2 restart dailyracer_frontend || pm2 start serve --name dailyracer_frontend -- dist -l 5173
-            
             pm2 save
