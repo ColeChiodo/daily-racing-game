@@ -15,6 +15,9 @@ const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 app.use(cors({ origin: frontendUrl, credentials: true }));
 app.use(express.json());
 
+// Trust proxy
+app.set('trust proxy', 1);
+
 // Session
 app.use(
     session({
@@ -24,9 +27,9 @@ app.use(
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
             secure: process.env.NODE_ENV === 'production',
-            httpOnly: true,
+            httpOnly: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            domain: process.env.NODE_ENV === 'production' ? '.colechiodo.cc' : undefined,
+            domain: process.env.NODE_ENV === 'production' ? '.dailyracer.colechiodo.cc' : undefined,
         },
     })
 );

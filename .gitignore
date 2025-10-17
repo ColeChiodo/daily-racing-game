@@ -26,6 +26,7 @@ backend/dist/
 frontend/.env
 backend/.env
 backend/.env.production
+backend/.env.development
 
 # Local VSCode settings
 .vscode/
