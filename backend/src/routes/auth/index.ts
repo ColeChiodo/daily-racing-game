@@ -12,54 +12,51 @@ router.get(
 
 // Google OAuth callback
 router.get(
-	'/google/callback',
-	passport.authenticate('google', { failureRedirect: '/' }),
-	async (req, res) => {
-		try {
-			const profile = req.user as any;
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  async (req, res) => {
+    try {
+      const profile = req.user as any;
 
-			if (
-				!profile ||
-				!profile.id ||
-				!profile.emails ||
-				!profile.emails[0].value
-			) {
-				throw new Error('Incomplete Google profile');
-			}
+      if (!profile || !profile.id || !profile.emails?.[0]?.value) {
+        throw new Error('Incomplete Google profile');
+      }
 
-			const email = profile.emails[0].value;
-			const name = profile.displayName;
-			const photo = profile.photos?.[0]?.value || null;
+      const email = profile.emails[0].value;
+      const name = profile.displayName;
+      const photo = profile.photos?.[0]?.value || null;
 
-			// Check if user exists
-			const { rows } = await pool.query(
-				'SELECT * FROM users WHERE google_id = $1',
-				[profile.id]
-			);
+      // Upsert user in database
+      const { rows } = await pool.query('SELECT * FROM users WHERE google_id = $1', [profile.id]);
+      if (rows.length === 0) {
+        await pool.query(
+          'INSERT INTO users (google_id, email, name, profile_image) VALUES ($1, $2, $3, $4)',
+          [profile.id, email, name, photo]
+        );
+      } else {
+        await pool.query(
+          'UPDATE users SET email = $1, name = $2, profile_image = $3 WHERE google_id = $4',
+          [email, name, photo, profile.id]
+        );
+      }
 
-			if (rows.length === 0) {
-				// Insert new user with profile image
-				await pool.query(
-					'INSERT INTO users (google_id, email, name, profile_image) VALUES ($1, $2, $3, $4)',
-					[profile.id, email, name, photo]
-				);
-			} else {
-				// Optionally update profile image/name if changed
-				await pool.query(
-					'UPDATE users SET email = $1, name = $2, profile_image = $3 WHERE google_id = $4',
-					[email, name, photo, profile.id]
-				);
-			}
+      // Set session cookie manually
+      res.cookie('connect.sid', req.sessionID, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        domain: process.env.NODE_ENV === 'production' ? '.dailyracer.colechiodo.cc' : undefined,
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+      });
 
-			// Redirect to frontend after login
-			res.redirect(`${process.env.FRONTEND_URL}?login=success`);
-		} catch (err) {
-			console.error('Error handling Google OAuth callback:', err);
-			res.redirect(`${process.env.FRONTEND_URL}?login=failure`);
-		}
-	}
+      // Redirect to frontend after login
+      res.redirect(`${process.env.FRONTEND_URL}?login=success`);
+    } catch (err) {
+      console.error('Error handling Google OAuth callback:', err);
+      res.redirect(`${process.env.FRONTEND_URL}?login=failure`);
+    }
+  }
 );
-
 
 // Logout route
 router.get('/logout', (req, res, next) => {
